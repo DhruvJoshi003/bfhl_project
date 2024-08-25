@@ -1,0 +1,54 @@
+<!-- frontend/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABCD123</title> <!-- Replace with your roll number -->
+</head>
+<body>
+    <h1>BFHL API</h1>
+    <textarea id="jsonInput" placeholder='Enter JSON here'></textarea>
+    <button onclick="submitData()">Submit</button>
+    <div>
+        <label for="dropdown">Select Data:</label>
+        <select id="dropdown" multiple>
+            <option value="numbers">Numbers</option>
+            <option value="alphabets">Alphabets</option>
+            <option value="highest_lowercase_alphabet">Highest Lowercase Alphabet</option>
+        </select>
+    </div>
+    <div id="response"></div>
+
+    <script>
+        async function submitData() {
+            const jsonData = document.getElementById("jsonInput").value;
+            const responseDiv = document.getElementById("response");
+            responseDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('https://your-backend-url/bfhl', { // Replace with your backend URL
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: jsonData,
+                });
+                const data = await response.json();
+                
+                const selectedOptions = Array.from(document.getElementById("dropdown").selectedOptions).map(opt => opt.value);
+                selectedOptions.forEach(option => {
+                    if (data[option]) {
+                        const p = document.createElement('p');
+                        p.textContent = `${option}: ${JSON.stringify(data[option])}`;
+                        responseDiv.appendChild(p);
+                    }
+                });
+            } catch (error) {
+                responseDiv.innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
